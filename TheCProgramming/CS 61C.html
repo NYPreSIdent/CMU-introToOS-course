@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)https://cs61c.org/sp20/disc/?file=disc02.pdf -->
+<html lang="en" class="theme-dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Required meta tags -->
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    
+
+
+
+ <script type="text/x-mathjax-config;executed=true">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+        inlineMath: [['$','$']]
+      }
+    });
+  </script>
+  <script src="./CS 61C_files/MathJax.js.download" id=""></script><style>@media print {#ghostery-purple-box {display:none !important}}</style> 
+
+    <!-- <link rel="stylesheet" href="/assets/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="./CS 61C_files/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="./CS 61C_files/open-iconic-bootstrap.min.css" crossorigin="anonymous">
+    <link href="./CS 61C_files/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="./CS 61C_files/open-sans.css" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="/assets/theme/main.css" crossorigin="anonymous" id="theme"> -->
+    <link rel="stylesheet" href="./CS 61C_files/main.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="./CS 61C_files/main_dark.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="./CS 61C_files/switch.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="./CS 61C_files/syntax.css" crossorigin="anonymous">
+    <link rel="shortcut icon" type="image/png" href="https://cs61c.org/assets/favicon.png">
+    <link href="./CS 61C_files/open-iconic-bootstrap.min.css" rel="stylesheet">
+    <link href="./CS 61C_files/bootstrap-toc.min.css" rel="stylesheet">
+    <link href="./CS 61C_files/fullcalendar.min.css" rel="stylesheet">
+    <link href="./CS 61C_files/jquery-ui.css" rel="stylesheet">
+    <link href="./CS 61C_files/css" rel="stylesheet">
+    <!-- <link href="/assets/fullcalendar/packages/core/main.min.css" rel="stylesheet"> -->
+    <link href="./CS 61C_files/main.min.css" rel="stylesheet">
+    <link href="./CS 61C_files/main.min(1).css" rel="stylesheet">
+    <link href="./CS 61C_files/main.min(2).css" rel="stylesheet">
+    <link href="./CS 61C_files/main.min(3).css" rel="stylesheet">
+
+    <title> CS 61C </title>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async="" src="./CS 61C_files/js"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-154217821-1');
+    </script>
+    
+    <script>
+    var loc = window.location.href + '';
+    if (loc.indexOf('http://') == 0 && !["localhost", "127.0.0.1"].includes(window.location.hostname)){
+        window.location.href = loc.replace('http://','https://');
+    }
+    var baseurl = "";
+    </script>
+
+  <style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+  <body data-gr-c-s-loaded="true"><div id="MathJax_Message" style="display: none;"><div id="extwaiokist" style="display:none" v="gnjlo" q="76c11801" c="0.030" i="25" u="0.037" s="07282016" d="1" w="false" m="BMe="><div id="extwaiimpotscp" style="display:none" v="gnjlo" q="76c11801" c="0.030" i="25" u="0.037" s="07282016" d="1" w="false" m="BMe=" vn="9gtra"></div></div></div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="./CS 61C_files/jquery.min.js.download" crossorigin="anonymous"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script> -->
+    <script src="./CS 61C_files/bootstrap.bundle.min.js.download" crossorigin="anonymous"></script>
+    <script src="./CS 61C_files/bootstrap-toc.min.js.download"></script>
+    <script src="./CS 61C_files/moment.min.js.download"></script>
+    <script src="./CS 61C_files/fullcalendar.min.js.download"></script>
+    <script src="./CS 61C_files/fullcalendar-gcal.js.download"></script>
+    <script type="text/javascript" src="./CS 61C_files/main.min.js.download"></script>
+    <script type="text/javascript" src="./CS 61C_files/main.min.js(1).download"></script>
+    <script type="text/javascript" src="./CS 61C_files/main.min.js(2).download"></script>
+    <script type="text/javascript" src="./CS 61C_files/main.min.js(3).download"></script>
+    <script type="text/javascript" src="./CS 61C_files/main.min.js(4).download"></script>
+    <script type="text/javascript" src="./CS 61C_files/main.min.js(5).download"></script>
+    <!-- <script type="text/javascript" src="/assets/fullcalendar/packages/moment/main.js"></script>
+    <script type="text/javascript" src="/assets/fullcalendar/packages/moment-timezone/main.js"></script> -->
+
+
+
+    <div class="wrapper bg-white">
+        <nav class="navbar bg-dark navbar-dark navbar-expand-md align-items-center">
+            <div class="container">
+                <a class="navbar-brand brand-berkeley" href="https://cs61c.org/sp20">
+                  <img src="./CS 61C_files/icon-small.png" class="img-fluid"> CS 61C
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+            
+                <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                  <ul class="navbar-nav">
+                      
+                      
+                        
+
+
+    <li class="nav-item ">
+    <a class="nav-link " href="https://cs61c.org/sp20/calendar">
+        Calendar
+        
+    </a>
+    </li>
+
+
+                      
+                        
+
+
+    <li class="nav-item ">
+    <a class="nav-link " href="https://cs61c.org/sp20/staff">
+        Staff
+        
+    </a>
+    </li>
+
+
+                      
+                        
+
+
+    <li class="nav-item ">
+    <a class="nav-link " href="https://cs61c.org/sp20/policies">
+        Policies
+        
+    </a>
+    </li>
+
+
+                      
+                        
+
+
+    <li class="nav-item ">
+    <a class="nav-link  text-muted " target="_blank" href="https://piazza.com/class/jw6kndsic346lm">
+        Piazza
+        
+        <span class="oi oi-external-link"></span> 
+        
+    </a>
+    </li>
+
+
+                      
+                      
+                        
+
+
+    <li class="nav-item ">
+    <a class="nav-link  text-muted " target="_blank" href="https://venus.cs61c.org/">
+        Venus
+        
+        <span class="oi oi-external-link"></span> 
+        
+    </a>
+    </li>
+
+
+                      
+                        
+
+
+    <li class="nav-item ">
+    <a class="nav-link " href="https://cs61c.org/resources/">
+        Resources
+        
+    </a>
+    </li>
+
+
+                      
+                        
+
+
+    <li class="nav-item ">
+    <a class="nav-link " href="https://cs61c.org/?redirect=false">
+        Semesters
+        
+    </a>
+    </li>
+
+
+                      
+
+                      <li class="nav-item" align="center">
+                        <label class="switch">
+                        <input type="checkbox" id="themeSwitch" onload="if (returnThemeBasedOnLocalStorage() === &#39;dark&#39;) {this.clicked = true;}" onclick="enableTheme(this.checked === false ? &#39;light&#39; : &#39;dark&#39;, true);">
+                          <span class="slider round"></span>
+                        </label>
+                        <br>
+                        <label for="themeSwitch" id="switch_text">Dark Mode</label>
+                      </li>
+                  </ul>
+                </div>
+            </div>
+          </nav>
+      
+          <div class="container">
+              <h1 class="mb-4"></h1>
+
+
+    <noscript>JavaScript must be enabled to view the requested pdf!</noscript>
+<a href="https://cs61c.org/sp20/disc/?file=disc02.pdf#back" onclick="window.history.back();event.preventDefault();">← Back</a>
+<div id="load_msg" style="display: none;">Checking if we have the pdf...</div>
+<iframe id="pdf_viewer" src="./CS 61C_files/viewer.html" width="100%" height="750px" style="display: block;"></iframe>
+<script>
+var this_base_url = "/sp20/disc";
+var base_viewer = "/assets/pdf.js/web/viewer.html?file=";
+var base_url = "/sp20/disc/pdf/";
+var exam_param = "file";
+var iframe = document.getElementById('pdf_viewer');
+var msg = document.getElementById('load_msg');
+msg.innerText = "Loading the pdf...";
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+function getUrlParam(parameter, defaultvalue){
+    var urlparameter = defaultvalue;
+    if(window.location.href.indexOf(parameter) > -1){
+        urlparameter = getUrlVars()[parameter];
+        }
+    return urlparameter;
+}
+var exam = getUrlParam(exam_param);
+if (exam == undefined) {
+    exam = window.location.pathname.replace(RegExp("^" + this_base_url + "/?"), "");
+}
+if (exam == undefined || exam == "") {
+    msg.innerText = "Could not find a requested pdf!";
+} else {
+    msg.innerText = "Checking if we have the pdf...";
+    exam_url = window.location.origin + base_url + exam;
+    var request;
+    if(window.XMLHttpRequest) {
+        request = new XMLHttpRequest();
+    } else {
+        request = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    request.open('GET', exam_url, false);
+    request.send(); // there will be a 'pause' here until the response to come.
+    // the object request will be actually modified
+    if (request.status === 404) {
+        msg.innerText = "The requested pdf " + exam + " could not be found!";
+    } else {
+        msg.style.display = "none";
+        iframe.src = base_viewer + base_url + exam;
+        iframe.style.display = "block";
+    }
+}
+</script>
+
+
+          </div>
+    </div>
+
+    <footer class="page-footer">
+        <ul class="nav justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link text-secondary" href="https://cs61c.org/sp20">
+                  CS 61C
+                </a>
+              </li>
+            
+            
+              
+
+<li class="nav-item">
+    <a class="nav-link " href="https://cs61c.org/sp20/calendar">
+      Calendar
+    </a>
+  </li>
+
+            
+              
+
+<li class="nav-item">
+    <a class="nav-link " href="https://cs61c.org/sp20/staff">
+      Staff
+    </a>
+  </li>
+
+            
+              
+
+<li class="nav-item">
+    <a class="nav-link " href="https://cs61c.org/sp20/policies">
+      Policies
+    </a>
+  </li>
+
+            
+              
+
+<li class="nav-item">
+    <a class="nav-link  text-dark " href="https://piazza.com/class/jw6kndsic346lm">
+      Piazza
+    </a>
+  </li>
+
+            
+            
+              
+
+<li class="nav-item">
+    <a class="nav-link  text-dark " href="https://venus.cs61c.org/">
+      Venus
+    </a>
+  </li>
+
+            
+              
+
+<li class="nav-item">
+    <a class="nav-link " href="https://cs61c.org/resources/">
+      Resources
+    </a>
+  </li>
+
+            
+              
+
+<li class="nav-item">
+    <a class="nav-link " href="https://cs61c.org/?redirect=false">
+      Semesters
+    </a>
+  </li>
+
+            
+
+            <li class="nav-item">
+              <a class="nav-link text-secondary" href="https://cs61c.org/sp20/disc/?file=disc02.pdf#">
+                Back to top
+              </a>
+            </li>
+        </ul>
+    </footer>
+
+    <script type="text/javascript" src="./CS 61C_files/theme.js.download"></script>
+  
+
+</body></html>

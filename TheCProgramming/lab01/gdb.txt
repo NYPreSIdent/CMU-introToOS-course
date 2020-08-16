@@ -1,0 +1,9 @@
+1.run + argument list
+2.type b + function name
+3.type n/s
+4.n
+5.type c
+6.type p + expression
+7.
+8.type info args
+9.type Quit
