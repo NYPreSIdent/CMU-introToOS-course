@@ -9,18 +9,6 @@
  * operations.
  *
  * It uses a singly-linked list to represent the set of queue elements
- */
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
-#include "harness.h"
-#include "queue.h"
-
-/*
-  Create empty queue.
-  Return NULL if could not allocate space.
 */
 queue_t *q_new()
 {
