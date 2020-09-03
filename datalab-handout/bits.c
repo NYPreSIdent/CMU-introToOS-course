@@ -143,7 +143,13 @@ NOTES:
  *   Rating: 1
  */
 int bitXor(int x, int y) {
-  return 2;
+    /* xor: if the correspond bits are not same, the
+     * out put would be 1, and vice versa. 
+     * or is combined with ~(~a & (~b)), and we can write nand
+     * to determind wether the ones appear simultinously. */
+    int negatedX = ~x;
+    int negatedY = ~y;
+    return ~(negatedX & negatedY) & ~(x & y);
 }
 /* 
  * tmin - return minimum two's complement integer 
@@ -152,9 +158,8 @@ int bitXor(int x, int y) {
  *   Rating: 1
  */
 int tmin(void) {
-
-  return 2;
-
+    int baseValue = 0x80;
+    return baseValue << 24;
 }
 //2
 /*
@@ -165,7 +170,8 @@ int tmin(void) {
  *   Rating: 1
  */
 int isTmax(int x) {
-  return 2;
+    int TmaxValue = ~(0x80 << 24);
+    return !(TmaxValue ^ x);
 }
 /* 
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
@@ -176,8 +182,14 @@ int isTmax(int x) {
  *   Rating: 2
  */
 int allOddBits(int x) {
-  return 2;
+    /* due to the property of binary number, we konw if the least signific
+     * number is 0, we can get a even number, if it's 1, we can get the odd
+     * number. So the first step we do is check the least significant number 
+     * of each four bits group from left to right. */
+    int mask = ((0x11 << 8 + 0x11) << 8 + 0x11) << 8 + 0x11;
+    return !(mask ^ x); 
 }
+
 /* 
  * negate - return -x 
  *   Example: negate(1) = -1.
@@ -186,8 +198,9 @@ int allOddBits(int x) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+    return ~x + 1;
 }
+
 //3
 /* 
  * isAsciiDigit - return 1 if 0x30 <= x <= 0x39 (ASCII codes for characters '0' to '9')
@@ -199,8 +212,12 @@ int negate(int x) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  return 2;
+    // We know x is 
+    int delta1 = 0x29 + (~x) + 1;
+    int delta2 = x + (~0x40 + 1);
+    return ((delta1 >> 31) & (delta2 >> 31));
 }
+
 /* 
  * conditional - same as x ? y : z 
  *   Example: conditional(2,4,5) = 4
@@ -209,7 +226,11 @@ int isAsciiDigit(int x) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+    /* if x is 0s, we can use !! to covert x to 0 or 1, we know 0 | x will get x itself, so
+     * we have two cases: x is not 0, we can convert it into 1, and << 31, then >> 31 to get all ones,
+     * & this number with y, we can get y. */
+    int condition = ~!!x;
+    return ~(((condition + 1) & y) ^ ((condition + 1) | z));
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -219,8 +240,13 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+    int signOfX = (x>>31);
+    int signOfY = (y>>31);
+    int isSameSign = !(signOfX ^ signOfY);
+    int negativeX = ~x + 1; 
+    return (~isSameSign & !(signOfY)) | (isSameSign & !((negativeX + y) >> 31));   
 }
+
 //4
 /* 
  * logicalNeg - implement the ! operator, using all of 
@@ -231,8 +257,13 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 4 
  */
 int logicalNeg(int x) {
-  return 2;
+    /* The sign of positive 0 and negative 0 are same, so we can use that property to determine whether the number is 0, and we must show that the sign bit of 0 is not 1. */
+    int negativeX = ~x + 1;
+    int signOfX = x >> 31;
+    int signOfNegX = negativeX >> 31;
+    return ((signOfX ^ signOfNegX) | signOfX) + 1  
 }
+
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
  *  Examples: howManyBits(12) = 5
@@ -246,8 +277,15 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-  return 0;
+    /* To determine the miminum number, we can set a range from the largest but smaller number to the smallest but larger number than x
+     * i.e. two digits: 10 -- 11, one digit: 0 -- 1, three digits: 100 -- 111 until to 32 digits. And we can apply binary search to 
+     * find the appropriate number range. */
+    int y, result, mask16, mask8, mask4, mask2, mask1, bitnum;
+
+    mask1 = 0x2;
+    mask2 = 0xC;
 }
+
 //float
 /* 
  * floatScale2 - Return bit-level equivalent of expression 2*f for
@@ -261,7 +299,12 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
-  return 2;
+    unsigned expo = (uf >> 23) & 0xff;
+    unsigned significand = (~((1 << 31) >> 24)) & uf;
+    if (significand != 0 && expo == ~0) {
+       return uf;
+    }
+    return uf + (1 << 23);  
 }
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
@@ -276,7 +319,10 @@ unsigned floatScale2(unsigned uf) {
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {
-  return 2;
+    unsigned expo = (uf >> 23) & 0xff;
+    unsigned significand = (~((1 << 31) >> 24) & uf);
+    unsigned sign = !!(uf >> 31);
+
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
@@ -292,5 +338,7 @@ int floatFloat2Int(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
-    return 2;
+    int signifiRange = ~((~0) << 23); // 00..001111...11
+    int outRange = sign    
 }
+

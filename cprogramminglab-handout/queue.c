@@ -65,7 +65,6 @@ bool q_insert_head(queue_t *q, char *s)
     newh->value = str; 
     newh->next = q->head;
     q->head = newh;
-    q->size += 1;
     return true;
 }
 
@@ -88,38 +87,17 @@ bool q_insert_tail(queue_t *q, char *s)
     if (newh == NULL) {
         return false;
     }
-    char *str = malloc(strlen(s) * sizeof(char) + 1);
-    if (str == NULL) {
-        free(newh);
-        return false;
-    }
-    strcpy(str, s);
-    newh->value = str;
-    newh->next = NULL;
-    (*(q->tail))->tail = newh;
-    q->tail = newh;
-    q->size += 1;
     return false;
 }
 
-void q_remove_head(queue_t *q, char *sp) {
 /*
   Attempt to remove element from head of queue.
   Return true if successful.
   Return false if queue is NULL or empty.
   If sp is non-NULL and an element is removed, copy the removed string to *sp
   (up to a maximum of bufsize-1 characters, plus a null terminator.)
-* You need to fix up this code. */
-    if (q == NULL) {
-        return false;
-    }
-    if (q->head == NULL) {
-        return false;
-    }
-    list_ele_t *temp = q->head->next;
-    strcpy(sp, q->head->value);
-    free(q->head);
-    q->head = temp; 
+    /* You need to fix up this code. */
+    q->head = q->head->next;
     return true;
 }
 
@@ -131,7 +109,7 @@ int q_size(queue_t *q)
 {
     /* You need to write the code for this function */
     /* Remember: It should operate in O(1) time */
-    return q->size;
+    return 0;
 }
 
 /*
@@ -144,22 +122,5 @@ int q_size(queue_t *q)
 void q_reverse(queue_t *q)
 {
     /* You need to write the code for this function */
-    if (q == NULL) {
-        return NULL;
-    }
-    if (q->size <= 1) {
-        return NULL;
-    }
-    list_ele_t *preHead = NULL;
-    list_ele_t *currHead = q->head;
-    while (currHead != NULL) {
-        list_ele_t *temp = currHead->next;
-        currHead->next = preHead;
-        preHead = currHead;
-        currHead = temp;
-    }
-    list_ele_t *temp = q->head;
-    q->tail = q->head;
-    q->head = q->tail;
 }
 
