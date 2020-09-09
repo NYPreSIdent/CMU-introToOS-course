@@ -277,13 +277,41 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-    /* To determine the miminum number, we can set a range from the largest but smaller number to the smallest but larger number than x
-     * i.e. two digits: 10 -- 11, one digit: 0 -- 1, three digits: 100 -- 111 until to 32 digits. And we can apply binary search to 
-     * find the appropriate number range. */
     int y, result, mask16, mask8, mask4, mask2, mask1, bitnum;
+    mask1 = 0x2; // 0x1 << 1
+    mask2 = 0xC; // 0x3 << 2
+    mask4 = 0xF0; // 0x00000F0;
+    mask8 = 0xFF << 8; // 0x0000FF00;
+    mask16 = (mask8 | 0xFF) << 16;
 
-    mask1 = 0x2;
-    mask2 = 0xC;
+    result = 1;
+    y = x ^ (x>>31);
+        
+    bitnum = !!((mask16 & y)<<4); 
+    result += bitnum;
+    y = y>>bitnum;
+
+    bitnum = !!((mask8 & y)<<3);
+    result += bitnum;
+    y = y>>bitnum;
+
+    bitnum = !!((mask4 & y)<<2); 
+    result += bitnum;
+    y = y >> bitnum;
+
+    bitnum = !!((mask2 & y)<<1);
+    result += bitnum;
+    y = y >> bitnum;
+
+    bitnum = !!(mask1 & y);
+    result += bitnum;
+    y = y >> bitnum;
+
+    return result;
+    // example: 0x11111100 => reverse: 0x00000011 rightShift: 1 << to the beginning of the number won't change the value of the number:
+    // devarivation: 2^w-1 => right shift k; when we left shift one, the number minus 2^w, and plus 2^(w-1), so the whole number won't 
+    // change. the the value of 0x11111100 is same as 0x100. when we negate 0x1111100, we can change all ones to zeros, so we can get
+    // 0x0000011 to represent the needed number of the bits. and we can plus one in the end to represent the sign notation. 
 }
 
 //float
@@ -299,12 +327,37 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
+    // There are some special cases we need to consider: Normalized and Denormalized.
+    // If exp is all ones and M is not all zeros, we can Just return uf itself.
+    // If exp is all ones and M is all zeros, we know it's infinite number.
+    // If exp is all zeros, it's denormalized value, we can not just plus one on exp, because the M is 0. follow
+    // significand number, so we can left shif 1, it maybe overflow though, we must consider this kind of situation.
+    // If exp is neither zeros nor ones, we can get one normalized value, we can plus one on to exp directly,
+    // e = 2 to the exp - bias, if plus one cause all ones, it will be denormalized value, we can return uf
+    // itself directly. 
     unsigned expo = (uf >> 23) & 0xff;
     unsigned significand = (~((1 << 31) >> 24)) & uf;
     if (significand != 0 && expo == ~0) {
        return uf;
     }
-    return uf + (1 << 23);  
+    if (significand == 0) {
+        return 0;
+    }
+    if (expo == 0) {
+        int uncertainSig = significand << 1;
+        if (uncertainSig < significand) {
+            expo += 1; // before: 0.M times 2^1-expo, after: 1.M times 2^1-expo is same as left shift one on the significand. and the expo is not change. i.e. when we cause overflow, we get 1xxxxxxxx, and the first one is additional due to the property of the normalized value, xxxxxxxx won't change which means we just move the point to right one positon and the scale two is implemented.
+        } else {
+           significand = uncertainSig;
+        }
+    }
+    if (expo != 0 && expo != ~0) {
+       expo += 1;
+       if (expo == ~0) {
+           return uf;               
+       }
+    }
+    return (exp << 23) + significand + (uf & (1 << 31));  
 }
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
@@ -319,10 +372,25 @@ unsigned floatScale2(unsigned uf) {
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {
-    unsigned expo = (uf >> 23) & 0xff;
-    unsigned significand = (~((1 << 31) >> 24) & uf);
-    unsigned sign = !!(uf >> 31);
-
+    /* We can divide uf into two different parts: 1. The positive part, 2. The negative part.
+     * if sign of uf is positive, we can roll down, if sign of uf is negative, we can roll up.
+     * first, we can calculate the exp to catch the position of float point, and round the point number,
+     *  */
+    int sign = uf >> 31;
+    int expMask = 0xff << 23;
+    unsigned significand = (~((1 << 31) >> 24)) & uf;
+    // if exp in range of 0x000.00 ~ 0x11..11, then we can calculate E by bias.
+    int exp = expMask & uf;
+    int E;
+    int bias = 127;
+    if (exp != 0 && exp != ~0) {
+        E = exp - bias; 
+    }
+    // if E is in the range of (23, 31), we can get the right solution, if out of range, we will 
+    // fail to represent.
+    if (E > 31) {
+        return 0x80000000u;
+    }
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
@@ -338,7 +406,29 @@ int floatFloat2Int(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
-    int signifiRange = ~((~0) << 23); // 00..001111...11
-    int outRange = sign    
-}
+    /* There are two ways to represent this expression, denormalized value, and normalized value:
+     * and the significand 1.0000...000, 0.xxx...xxx where x can represent 1 which only appear once.
+     * denormalized situation: exp is fixed: 1 - bias, and we can exchange the point position through
+     * shifting position of one in significand. normalized situation: exp will change, but M can not change due to
+     * the implied leading one. */ 
+     
+     // We start by denormalized situation.
+     int Mass = 0x1<<22; // 0x0000......0001, The smallest precision we can represent. 1-bias=-127.
+     if (x < -150) {
+        return 0;
+     } 
+     if (x <= -128) {
+        x += 128;
+        x = ~x + 1;
+        Mass = Mass >> x; 
+        return Mass;
+     }
+     if (x > -128) {
+         // Now the position of one is fixed due to the implied leading one.
+         if (x > 254) {
+            return +INF;
+         }
+     }
+     return x << 23;
+} 
 
