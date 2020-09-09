@@ -376,20 +376,32 @@ int floatFloat2Int(unsigned uf) {
      * if sign of uf is positive, we can roll down, if sign of uf is negative, we can roll up.
      * first, we can calculate the exp to catch the position of float point, and round the point number,
      *  */
-    int sign = uf >> 31;
-    int expMask = 0xff << 23;
-    unsigned significand = (~((1 << 31) >> 24)) & uf;
-    // if exp in range of 0x000.00 ~ 0x11..11, then we can calculate E by bias.
-    int exp = expMask & uf;
-    int E;
-    int bias = 127;
-    if (exp != 0 && exp != ~0) {
-        E = exp - bias; 
-    }
-    // if E is in the range of (23, 31), we can get the right solution, if out of range, we will 
-    // fail to represent.
-    if (E > 31) {
+    int maskE, maskM, maskS, S, E, M, exp, shift, result;
+    maskE = 0x7F800000;
+    maskM = 0x007FFFFF;
+    maskS = 0x80000000;
+
+    S = uf & maskS;
+    E = uf & maskE;
+    M = (uf & maskM) | 0x00800000;
+
+    exp = -127 + (E >> 23);
+    shift = -23 + exp;
+    if (E==0x7F800000 || (shift > 7)) {
         return 0x80000000u;
+    }
+    if (exp < 0) {
+        return 0;
+    }
+    if (shift < 0) {
+        result = M >> -shift;
+    } else {
+        result = M << shift;
+    }
+    if (S==0x80000000) {
+        return ~result + 1;
+    } else {
+        return result;
     }
 }
 /* 
