@@ -20,8 +20,38 @@ int is_transpose(int M, int N, int A[N][M], int B[M][N]);
  *     be graded. 
  */
 char transpose_submit_desc[] = "Transpose submission";
-void transpose_submit(int M, int N, int A[N][M], int B[M][N])
-{
+void transpose_submit(int M, int N, int A[N][M], int B[M][N]) {
+    int blockRow, blockColumn, iterateNum;
+    int temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8;
+
+    // We divide it into 8x8 blocks, so all the block rows or columns can be fit into the cache cause we
+    // have 32 sets.
+    if (N == 32 && M == 32) {
+        for (blockRow = 0; blockRow < 4; blockRow++) {
+            for (blockColumn = 0; blockColumn < 4; blockColumn++) {
+                for (iterateNum = 0; iterateNum < 8; iterateNum++) {
+                    temp1 = A[blockRow * 8][blockColumn * 8 + iterateNum];
+                    temp2 = A[blockRow * 8 + 1][blockColumn * 8 + iterateNum];
+                    temp3 = A[blockRow * 8 + 2][blockColumn * 8 + iterateNum];
+                    temp4 = A[blockRow * 8 + 3][blockColumn * 8 + iterateNum];
+                    temp5 = A[blockRow * 8 + 4][blockColumn * 8 + iterateNum];
+                    temp6 = A[blockRow * 8 + 5][blockColumn * 8 + iterateNum];
+                    temp7 = A[blockRow * 8 + 6][blockColumn * 8 + iterateNum];
+                    temp8 = A[blockRow * 8 + 7][blockColumn * 8 + iterateNum];
+
+                    B[blockColumn * 8 + iterateNum][blockRow * 8] = temp1;
+                    B[blockColumn * 8 + iterateNum][blockRow * 8 + 1] = temp2;
+                    B[blockColumn * 8 + iterateNum][blockRow * 8 + 2] = temp3;
+                    B[blockColumn * 8 + iterateNum][blockRow * 8 + 3] = temp4;
+                    B[blockColumn * 8 + iterateNum][blockRow * 8 + 4] = temp5;
+                    B[blockColumn * 8 + iterateNum][blockRow * 8 + 5] = temp6;
+                    B[blockColumn * 8 + iterateNum][blockRow * 8 + 6] = temp7;
+                    B[blockColumn * 8 + iterateNum][blockRow * 8 + 7] = temp8;
+                }
+            }
+        }
+    }
+
 }
 
 /* 
