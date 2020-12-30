@@ -1,6 +1,5 @@
 /* 
- * trans.c - Matrix transpose B = A^T
- *
+ * trans.c - Matrix transpose B = A^T *
  * Each transpose function must have a prototype of the form:
  * void trans(int M, int N, int A[N][M], int B[M][N]);
  *
@@ -21,7 +20,7 @@ int is_transpose(int M, int N, int A[N][M], int B[M][N]);
  */
 char transpose_submit_desc[] = "Transpose submission";
 void transpose_submit(int M, int N, int A[N][M], int B[M][N]) {
-    int blockRow, blockColumn, iterateNum;
+    int blockRow, blockColumn, iterateNum, baseNum;
     int temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8;
 
     // We divide it into 8x8 blocks, so all the block rows or columns can be fit into the cache cause we
@@ -52,6 +51,140 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N]) {
         }
     }
 
+    if ( M == 64 && N == 64 ) {                       
+        /* This part is trivial and hard. 
+           We splite the matrix into 8 x 8 submatrix! */
+        for (blockRow = 0; blockRow < 16; blockRow++) {
+            for (blockColumn = 0; blockColumn < 16; blockColumn++) {
+                for (baseNum = iterateNum = 0; iterateNum < 8; iterateNum++) {                                            
+
+                    temp1 = A[blockRow * 8 + iterateNum][blockColumn * 8];
+                    temp2 = A[blockRow * 8 + iterateNum][blockColumn * 8 + 1];
+                    temp3 = A[blockRow * 8 + iterateNum][blockColumn * 8 + 2];
+                    temp4 = A[blockRow * 8 + iterateNum][blockColumn * 8 + 3];
+                    temp5 = A[blockRow * 8 + iterateNum][blockColumn * 8 + 4];
+                    temp6 = A[blockRow * 8 + iterateNum][blockColumn * 8 + 5];
+                    temp7 = A[blockRow * 8 + iterateNum][blockColumn * 8 + 6];
+                    temp8 = A[blockRow * 8 + iterateNum][blockColumn * 8 + 7];
+                    // I think the code above won't be change any more.
+
+                    if (iterateNum == 0 || iterateNum == 1 || iterateNum == 4 || iterateNum == 5) {
+                        B[blockRow * 8][blockColumn * 8 + baseNum] = temp1;
+                        B[blockRow * 8 + 1][blockColumn * 8 + baseNum] = temp2;
+                        B[blockRow * 8 + 2][blockColumn * 8 + baseNum] = temp3;
+                        B[blockRow * 8 + 3][blockColumn * 8 + baseNum] = temp4;
+
+                        B[blockRow * 8][blockColumn * 8 + 1 + baseNum] = temp5;
+                        B[blockRow * 8 + 1][blockColumn * 8 + 1 + baseNum] = temp6;
+                        B[blockRow * 8 + 2][blockColumn * 8 + 1 + baseNum] = temp7;
+                        B[blockRow * 8 + 3][blockColumn * 8 + 1 + baseNum] = temp8;
+
+                    
+                        // suppose iterate number is 2.
+                        if ((baseNum == 2 && iterateNum == 1) || (baseNum == 6 && iterateNum == 5)) {
+                            baseNum += 2;
+                            temp1 = B[blockRow * 8][blockColumn * 8 + (baseNum) / 2 - 1];
+                            temp2 = B[blockRow * 8 + 1][blockColumn * 8 + (baseNum) / 2 - 1];
+                            temp3 = B[blockRow * 8 + 2][blockColumn * 8 + (baseNum) / 2 - 1];
+                            temp4 = B[blockRow * 8 + 3][blockColumn * 8 + (baseNum) / 2 - 1];
+
+                            temp5 = B[blockRow * 8][blockColumn * 8 + (baseNum) / 2 + 1];
+                            temp6 = B[blockRow * 8 + 1][blockColumn * 8 + (baseNum) / 2 + 1];
+                            temp7 = B[blockRow * 8 + 2][blockColumn * 8 + (baseNum) / 2 + 1];
+                            temp8 = B[blockRow * 8 + 3][blockColumn * 8 + (baseNum) / 2 + 1];
+
+                            B[blockRow * 8][blockColumn * 8 + (baseNum) / 2 - 1] = B[blockRow * 8][blockColumn * 8 + (baseNum + 1) / 2];
+                            B[blockRow * 8 + 1][blockColumn * 8 + (baseNum) / 2 - 1] = B[blockRow * 8 + 1][blockColumn * 8 + (baseNum + 1) / 2];
+                            B[blockRow * 8 + 2][blockColumn * 8 + (baseNum) / 2 - 1] = B[blockRow * 8 + 2][blockColumn * 8 + (baseNum + 1) / 2];
+                            B[blockRow * 8 + 3][blockColumn * 8 + (baseNum) / 2 - 1] = B[blockRow * 8 + 3][blockColumn * 8 + (baseNum + 1) / 2];
+
+
+                            B[blockRow * 8 + 4][blockColumn * 8 + (baseNum) - 4] = temp1;
+                            B[blockRow * 8 + 5][blockColumn * 8 + (baseNum) - 4] = temp2;
+                            B[blockRow * 8 + 6][blockColumn * 8 + (baseNum) - 4] = temp3;
+                            B[blockRow * 8 + 7][blockColumn * 8 + (baseNum) - 4] = temp4;
+
+                            B[blockRow * 8 + 4][blockColumn * 8 + (baseNum) - 3] = temp5;
+                            B[blockRow * 8 + 5][blockColumn * 8 + (baseNum) - 3] = temp6;
+                            B[blockRow * 8 + 6][blockColumn * 8 + (baseNum) - 3] = temp7;
+                            B[blockRow * 8 + 7][blockColumn * 8 + (baseNum) - 3] = temp8;
+                            baseNum /= 2;
+                            
+                            continue;
+                            // This is a swap process.
+                        }
+                        baseNum += 2;
+                    }
+
+
+                    if (iterateNum == 2 || iterateNum == 3 || iterateNum == 6 || iterateNum == 7) {
+                        B[blockRow * 8 + 4][blockColumn * 8 + baseNum] = temp1;
+                        B[blockRow * 8 + 5][blockColumn * 8 + baseNum] = temp2;
+                        B[blockRow * 8 + 6][blockColumn * 8 + baseNum] = temp3;
+                        B[blockRow * 8 + 7][blockColumn * 8 + baseNum] = temp4;
+
+                        B[blockRow * 8 + 4][blockColumn * 8 + 1 + baseNum] = temp5;
+                        B[blockRow * 8 + 5][blockColumn * 8 + 1 + baseNum] = temp6;
+                        B[blockRow * 8 + 6][blockColumn * 8 + 1 + baseNum] = temp7;
+                        B[blockRow * 8 + 7][blockColumn * 8 + 1 + baseNum] = temp8;
+                        printf("the number at first row of B: %d\n", temp1);
+                        printf("position: %d, %d\n", blockRow * 8 + 4, blockColumn * 8 + 1 + baseNum);
+
+                    
+                        // suppose iterate number is 2.
+                        if (((baseNum) == 4 && iterateNum == 3) || ((baseNum) == 8 && iterateNum == 7)) {
+                            baseNum += 2;
+                            temp1 = B[blockRow * 8 + 4][blockColumn * 8 + (baseNum) / 2 - 1];
+                            printf("row:%d\n",blockRow * 8 + 4);
+                            printf("position: %d, %d", blockRow * 8 + 4, blockColumn * 8 + (baseNum) / 2 - 1);
+                            printf("column:%d\n", blockColumn * 8 + baseNum / 2 - 1);
+                            temp2 = B[blockRow * 8 + 5][blockColumn * 8 + (baseNum) / 2 - 1];
+                            temp3 = B[blockRow * 8 + 6][blockColumn * 8 + (baseNum) / 2 - 1];
+                            temp4 = B[blockRow * 8 + 7][blockColumn * 8 + (baseNum) / 2 - 1];
+
+                            temp5 = B[blockRow * 8 + 4][blockColumn * 8 + (baseNum) / 2 + 1];
+                            printf("the temp5 is here: %d\n", temp5);
+                            temp6 = B[blockRow * 8 + 5][blockColumn * 8 + (baseNum) / 2 + 1];
+                            temp7 = B[blockRow * 8 + 6][blockColumn * 8 + (baseNum) / 2 + 1];
+                            temp8 = B[blockRow * 8 + 7][blockColumn * 8 + (baseNum) / 2 + 1];
+
+                            B[blockRow * 8 + 4][blockColumn * 8 + (baseNum) / 2 - 1] = B[blockRow * 8 + 4][blockColumn * 8 + (baseNum) / 2];
+                            B[blockRow * 8 + 5][blockColumn * 8 + (baseNum) / 2 - 1] = B[blockRow * 8 + 5][blockColumn * 8 + (baseNum) / 2];
+                            B[blockRow * 8 + 6][blockColumn * 8 + (baseNum) / 2 - 1] = B[blockRow * 8 + 6][blockColumn * 8 + (baseNum) / 2];
+                            B[blockRow * 8 + 7][blockColumn * 8 + (baseNum) / 2 - 1] = B[blockRow * 8 + 7][blockColumn * 8 + (baseNum) / 2];
+
+                            B[blockRow * 8 + 4][blockColumn * 8 + (baseNum) / 2] = B[blockRow * 8 + 4][blockColumn * 8 + baseNum - 1];
+                            B[blockRow * 8 + 5][blockColumn * 8 + (baseNum) / 2] = B[blockRow * 8 + 5][blockColumn * 8 + baseNum - 1];
+                            B[blockRow * 8 + 6][blockColumn * 8 + (baseNum) / 2] = B[blockRow * 8 + 6][blockColumn * 8 + baseNum - 1];
+                            B[blockRow * 8 + 7][blockColumn * 8 + (baseNum) / 2] = B[blockRow * 8 + 7][blockColumn * 8 + baseNum - 1];
+
+
+
+                            B[blockRow * 8][blockColumn * 8 + (baseNum) - 4] = temp1;
+                            B[blockRow * 8 + 1][blockColumn * 8 + (baseNum) - 4] = temp2;
+                            B[blockRow * 8 + 2][blockColumn * 8 + (baseNum) - 4] = temp3;
+                            B[blockRow * 8 + 3][blockColumn * 8 + (baseNum) - 4] = temp4;
+
+                            B[blockRow * 8][blockColumn * 8 + (baseNum) - 3] = temp5;
+                            B[blockRow * 8 + 1][blockColumn * 8 + (baseNum) - 3] = temp6;
+                            B[blockRow * 8 + 2][blockColumn * 8 + (baseNum) - 3] = temp7;
+                            B[blockRow * 8 + 3][blockColumn * 8 + (baseNum) - 3] = temp8;
+                            baseNum /= 2;
+                            // That's all.
+                            printf("the answer is : %d, %d\n", B[blockRow * 8][blockColumn * 8 + baseNum) - 3], temp5);
+                            continue;
+
+                        }            
+                        baseNum += 2;
+                    }
+                }
+            }
+        }
+    }
+
+    if ( M == 61 && N == 67 ) {        
+
+    }
 }
 
 /* 
@@ -111,4 +244,5 @@ int is_transpose(int M, int N, int A[N][M], int B[M][N])
     }
     return 1;
 }
+
 
